@@ -62,10 +62,9 @@ public class BasicTelop4224 extends OpMode
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
     private DcMotor intakeMotor = null;
-    private Servo clawServo = null;
-    private Servo intakeServo = null;
-    private boolean isIntakeOn = false;
-    private boolean isClawOpen = false;
+    private DcMotor flywheelRightMotor = null;
+    private DcMotor flywheelLeftMotor = null;
+    private boolean isFlywheelOn = false;
 
 
     /*
@@ -83,8 +82,8 @@ public class BasicTelop4224 extends OpMode
         frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
         intakeMotor = hardwareMap.get(DcMotor.class, "intake_motor");
-        clawServo = hardwareMap.get(Servo.class, "claw_servo");
-        intakeServo = hardwareMap.get(Servo.class, "small_intake_servo");
+        flywheelRightMotor = hardwareMap.get(DcMotor.class, "flywheel_right_motor");
+        flywheelLeftMotor = hardwareMap.get(DcMotor.class, "flywheel_left_motor");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -94,8 +93,8 @@ public class BasicTelop4224 extends OpMode
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        clawServo.setDirection(Servo.Direction.FORWARD);
-        intakeServo.setDirection(Servo.Direction.REVERSE);
+        flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -128,33 +127,33 @@ public class BasicTelop4224 extends OpMode
 
 
 
-        if (gamepad1.aWasPressed()){
-            isIntakeOn = !isIntakeOn;
 
-        }
 
-        if (isIntakeOn == true){
+
+        if (gamepad1.right_bumper) {
 
             intakeMotor.setPower(1);
-            intakeServo.setPosition(1);
 
-        }
-        else {
+        } else {
             intakeMotor.setPower(0);
-            intakeServo.setPosition(0.5);
 
         }
 
-        if (gamepad1.xWasPressed()){
-            isClawOpen = !isClawOpen;
-        }
+       if (gamepad1.yWasPressed()){
+           isFlywheelOn = !isFlywheelOn;
+       }
 
-        if (isClawOpen == true){
-            clawServo.setPosition(1);
-        }
-        else {
-            clawServo.setPosition(0);
-        }
+       if (isFlywheelOn == true){
+
+           flywheelRightMotor.setPower(1);
+           flywheelLeftMotor.setPower(1);
+       }
+       else {
+           flywheelLeftMotor.setPower(0);
+           flywheelRightMotor.setPower(0);
+       }
+
+
     }
 
     /*
