@@ -65,6 +65,9 @@ public class BasicTelop4224 extends OpMode
     private DcMotor flywheelRightMotor = null;
     private DcMotor flywheelLeftMotor = null;
     private boolean isFlywheelOn = false;
+    private boolean isSlowModeOn = false;
+    private double driveSpeed = 1;
+
 
 
     /*
@@ -120,10 +123,10 @@ public class BasicTelop4224 extends OpMode
         double rx = gamepad1.right_stick_x;
 
 
-        frontLeftDrive.setPower(y + x + rx);
-        backLeftDrive.setPower(y - x + rx);
-        frontRightDrive.setPower(y - x - rx);
-        backRightDrive.setPower(y + x - rx);
+        frontLeftDrive.setPower((y + x + rx) * driveSpeed);
+        backLeftDrive.setPower((y - x + rx) * driveSpeed);
+        frontRightDrive.setPower((y - x - rx) * driveSpeed);
+        backRightDrive.setPower((y + x - rx) * driveSpeed);
 
 
 
@@ -153,6 +156,16 @@ public class BasicTelop4224 extends OpMode
            flywheelRightMotor.setPower(0);
        }
 
+       if (gamepad1.leftBumperWasPressed()){
+            isSlowModeOn = !isSlowModeOn;
+       }
+       if (isSlowModeOn == true){
+
+           driveSpeed = 0.5;
+       }
+       else {
+           driveSpeed = 1;
+       }
 
     }
 
