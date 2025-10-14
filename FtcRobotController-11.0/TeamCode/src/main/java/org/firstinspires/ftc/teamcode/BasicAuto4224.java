@@ -65,6 +65,12 @@ public class BasicAuto4224 extends OpMode
     private DcMotor flywheelRightMotor = null;
     private DcMotor flywheelLeftMotor = null;
     private double driveSpeed = 1;
+    private double actionEndTime = 0;
+    private double[] actionTimes;
+    private int currentActionIndex = 0;
+
+
+
   
 
 
@@ -101,7 +107,10 @@ public class BasicAuto4224 extends OpMode
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
-
+        actionTimes = new double[3];
+        actionTimes[0] = 1;
+        actionTimes[1] = .43;
+        actionTimes[2] = 3;
     }
 
 
@@ -120,13 +129,13 @@ public class BasicAuto4224 extends OpMode
     @Override
     public void loop() {
 
-        if (runtime.seconds() < 1){
+        if (currentActionIndex == 0){
             driveRobot(0,1,0);
         }
-        else if (runtime.seconds() < 1.43){
+        else if (currentActionIndex == 1){
             driveRobot(0,0,1);
         }
-        else  if (runtime.seconds() < 4.43){
+        else  if (currentActionIndex == 2){
             driveRobot(-.25,0,0);
         }
         else {
@@ -139,6 +148,10 @@ public class BasicAuto4224 extends OpMode
 
 
 
+        if (runtime.seconds() > actionEndTime){
+            currentActionIndex++;
+            actionEndTime += actionTimes[currentActionIndex];
+        }
     }
 
     /*
