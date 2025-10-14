@@ -142,7 +142,7 @@ public class BasicTelop4224 extends OpMode
 
         if (gamepad1.right_bumper) {
 
-            intakeMotor.setPower(1);
+            intakeMotor.setPower(Constants.INTAKE_SPEED);
 
         } else {
             intakeMotor.setPower(0);

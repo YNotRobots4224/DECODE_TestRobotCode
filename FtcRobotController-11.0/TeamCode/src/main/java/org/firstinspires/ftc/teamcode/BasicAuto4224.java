@@ -176,7 +176,7 @@ public class BasicAuto4224 extends OpMode
     }
     public void turnIntakeOn(boolean on){
         if (on == true){
-            intakeMotor.setPower(1);
+            intakeMotor.setPower(Constants.INTAKE_SPEED);
         }
         else {
             intakeMotor.setPower(0);
