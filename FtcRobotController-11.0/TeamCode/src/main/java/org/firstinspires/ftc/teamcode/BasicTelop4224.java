@@ -66,7 +66,7 @@ public class BasicTelop4224 extends OpMode
     //private DcMotor flywheelLeftMotor = null;
     private boolean isFlywheelOn = false;
     private boolean isSlowModeOn = false;
-    private double driveSpeed = 1;
+    private double driveSpeed = Constants.DRIVE_SPEED;
 
 
 
@@ -155,8 +155,8 @@ public class BasicTelop4224 extends OpMode
 
        if (isFlywheelOn == true){
 
-          // flywheelRightMotor.setPower(1);
-           //flywheelLeftMotor.setPower(1);
+           //flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED);
+           //flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED);
        }
        else {
            //flywheelLeftMotor.setPower(0);
@@ -168,10 +168,10 @@ public class BasicTelop4224 extends OpMode
        }
        if (isSlowModeOn == true){
 
-           driveSpeed = 0.5;
+           driveSpeed = Constants.SLOW_DRIVE_SPEED;
        }
        else {
-           driveSpeed = 1;
+           driveSpeed = Constants.DRIVE_SPEED;
        }
 
     }

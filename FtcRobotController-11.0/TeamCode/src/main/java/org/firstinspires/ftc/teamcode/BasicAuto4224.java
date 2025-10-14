@@ -169,10 +169,10 @@ public class BasicAuto4224 extends OpMode
     }
 
     public void driveRobot(double x, double y, double rx){
-        frontLeftDrive.setPower((y + x + rx) * driveSpeed);
-        backLeftDrive.setPower((y - x + rx) * driveSpeed);
-        frontRightDrive.setPower((y - x - rx) * driveSpeed);
-        backRightDrive.setPower((y + x - rx) * driveSpeed);
+        frontLeftDrive.setPower((y + x + rx) * Constants.DRIVE_SPEED);
+        backLeftDrive.setPower((y - x + rx) * Constants.DRIVE_SPEED);
+        frontRightDrive.setPower((y - x - rx) * Constants.DRIVE_SPEED);
+        backRightDrive.setPower((y + x - rx) * Constants.DRIVE_SPEED);
     }
     public void turnIntakeOn(boolean on){
         if (on == true){
