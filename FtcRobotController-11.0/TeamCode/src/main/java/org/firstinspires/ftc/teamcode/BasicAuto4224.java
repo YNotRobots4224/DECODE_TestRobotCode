@@ -85,13 +85,13 @@ public class BasicAuto4224 extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        frontLeftDrive  = hardwareMap.get(DcMotor.class, "front_left_drive");
-        backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
-        backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
-        intakeMotor = hardwareMap.get(DcMotor.class, "intake_motor");
-        flywheelRightMotor = hardwareMap.get(DcMotor.class, "flywheel_right_motor");
-        flywheelLeftMotor = hardwareMap.get(DcMotor.class, "flywheel_left_motor");
+        frontLeftDrive  = hardwareMap.get(DcMotor.class, Constants.FRONT_LEFT_MOTOR);
+        backLeftDrive = hardwareMap.get(DcMotor.class, Constants.BACK_LEFT_MOTOR);
+        frontRightDrive = hardwareMap.get(DcMotor.class, Constants.FRONT_RIGHT_MOTOR);
+        backRightDrive = hardwareMap.get(DcMotor.class, Constants.BACK_RIGHT_MOTOR);
+        intakeMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_MOTOR);
+        flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
+        flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
