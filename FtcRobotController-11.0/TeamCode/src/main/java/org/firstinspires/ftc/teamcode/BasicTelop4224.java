@@ -61,7 +61,7 @@ public class BasicTelop4224 extends OpMode
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
-   // private DcMotor intakeMotor = null;
+    private DcMotor intakeMotor = null;
     //private DcMotor flywheelRightMotor = null;
     //private DcMotor flywheelLeftMotor = null;
     private boolean isFlywheelOn = false;
@@ -84,7 +84,7 @@ public class BasicTelop4224 extends OpMode
         backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
         frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
-       // intakeMotor = hardwareMap.get(DcMotor.class, "intake_motor");
+        intakeMotor = hardwareMap.get(DcMotor.class, "intake_motor");
        // flywheelRightMotor = hardwareMap.get(DcMotor.class, "flywheel_right_motor");
         //flywheelLeftMotor = hardwareMap.get(DcMotor.class, "flywheel_left_motor");
 
@@ -95,7 +95,7 @@ public class BasicTelop4224 extends OpMode
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        //intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         //flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         //flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -142,10 +142,10 @@ public class BasicTelop4224 extends OpMode
 
         if (gamepad1.right_bumper) {
 
-            //intakeMotor.setPower(1);
+            intakeMotor.setPower(1);
 
         } else {
-           // intakeMotor.setPower(0);
+            intakeMotor.setPower(0);
 
         }
 
