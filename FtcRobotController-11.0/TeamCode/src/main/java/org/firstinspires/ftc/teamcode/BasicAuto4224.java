@@ -50,7 +50,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Basic Telop 4224", group="Iterative OpMode")
+@Autonomous(name="Basic Auto 4224", group="Iterative OpMode")
 public class BasicAuto4224 extends OpMode
 {
     // Declare OpMode members.
@@ -62,8 +62,8 @@ public class BasicAuto4224 extends OpMode
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
     private DcMotor intakeMotor = null;
-    private DcMotor flywheelRightMotor = null;
-    private DcMotor flywheelLeftMotor = null;
+    //private DcMotor flywheelRightMotor = null;
+    //private DcMotor flywheelLeftMotor = null;
     private double driveSpeed = 1;
     private double actionEndTime = 0;
     private double[] actionTimes;
@@ -90,28 +90,26 @@ public class BasicAuto4224 extends OpMode
         frontRightDrive = hardwareMap.get(DcMotor.class, Constants.FRONT_RIGHT_MOTOR);
         backRightDrive = hardwareMap.get(DcMotor.class, Constants.BACK_RIGHT_MOTOR);
         intakeMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_MOTOR);
-        flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
-        flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
+        //flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
+        //flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        //flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
-        actionTimes = new double[4];
-        actionTimes[0] = 1;
-        actionTimes[1] = .43;
-        actionTimes[2] = 3;
-        actionTimes[3] = 2;
+        actionTimes = new double[2];
+        actionTimes[0] = 0.43;
+        actionTimes[1] = 2.5;
         actionEndTime = actionTimes[0];
     }
 
@@ -132,32 +130,21 @@ public class BasicAuto4224 extends OpMode
     public void loop() {
 
         if (currentActionIndex == 0){
-            driveRobot(0,1,0);
+            driveRobot(-1,0,0);
         }
         else if (currentActionIndex == 1){
-            driveRobot(0,0,1);
-        }
-        else  if (currentActionIndex == 2){
-            driveRobot(-.25,0,0);
-        }
-        else if (currentActionIndex == 3) {
-            driveRobot(0,0,0);
-            turnIntakeOn(true);
+            driveRobot(0,-1,0);
         }
         else {
-            turnIntakeOn(false);
             driveRobot(0,0,0);
         }
-
-
-
-
-
 
 
         if (runtime.seconds() > actionEndTime){
             currentActionIndex++;
-            actionEndTime += actionTimes[currentActionIndex];
+            if(currentActionIndex < actionTimes.length){
+                actionEndTime += actionTimes[currentActionIndex];
+            }
         }
     }
 
