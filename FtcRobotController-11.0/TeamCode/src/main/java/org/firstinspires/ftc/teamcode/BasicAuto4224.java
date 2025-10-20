@@ -62,8 +62,8 @@ public class BasicAuto4224 extends OpMode
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
     private DcMotor intakeMotor = null;
-    //private DcMotor flywheelRightMotor = null;
-    //private DcMotor flywheelLeftMotor = null;
+    private DcMotor flywheelRightMotor = null;
+    private DcMotor flywheelLeftMotor = null;
     private double driveSpeed = 1;
     private double actionEndTime = 0;
     private double[] actionTimes;
@@ -90,8 +90,8 @@ public class BasicAuto4224 extends OpMode
         frontRightDrive = hardwareMap.get(DcMotor.class, Constants.FRONT_RIGHT_MOTOR);
         backRightDrive = hardwareMap.get(DcMotor.class, Constants.BACK_RIGHT_MOTOR);
         intakeMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_MOTOR);
-        //flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
-        //flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
+        flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
+        flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -100,9 +100,9 @@ public class BasicAuto4224 extends OpMode
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        //flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        //flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");

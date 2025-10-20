@@ -64,7 +64,8 @@ public class BasicTelop4224 extends OpMode
     private DcMotor intakeMotor = null;
     private DcMotor flywheelRightMotor = null;
     private DcMotor flywheelLeftMotor = null;
-    private boolean isFlywheelOn = false;
+    private boolean isFastFlywheelOn = false;
+    private boolean isSlowFlywheelOn = false;
     private boolean isSlowModeOn = false;
     private double driveSpeed = Constants.DRIVE_SPEED;
 
@@ -95,7 +96,7 @@ public class BasicTelop4224 extends OpMode
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -150,13 +151,27 @@ public class BasicTelop4224 extends OpMode
         }
 
        if (gamepad1.yWasPressed()){
-           isFlywheelOn = !isFlywheelOn;
+           isFastFlywheelOn = !isFastFlywheelOn;
        }
 
-       if (isFlywheelOn == true){
+       if (isFastFlywheelOn == true){
 
-           flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED);
-           flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED);
+           flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
+           flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
+       }
+       else {
+           flywheelLeftMotor.setPower(0);
+           flywheelRightMotor.setPower(0);
+       }
+
+       if (gamepad1.bWasPressed()){
+           isSlowFlywheelOn = !isSlowFlywheelOn;
+       }
+
+       if (isSlowFlywheelOn == true){
+
+           flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
+           flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
        }
        else {
            flywheelLeftMotor.setPower(0);
