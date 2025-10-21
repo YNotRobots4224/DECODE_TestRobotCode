@@ -107,9 +107,12 @@ public class BasicAuto4224 extends OpMode
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
-        actionTimes = new double[2];
-        actionTimes[0] = 0.43;
-        actionTimes[1] = 2.5;
+        actionTimes = new double[5];
+        actionTimes[0] = .2;
+        actionTimes[1] = .23;
+        actionTimes[2] = 2;
+        actionTimes[3] = .25;
+        actionTimes[4] = .25;
         actionEndTime = actionTimes[0];
     }
 
@@ -135,8 +138,21 @@ public class BasicAuto4224 extends OpMode
         else if (currentActionIndex == 1){
             driveRobot(0,-1,0);
         }
+        else if (currentActionIndex == 2) {
+            turnIntakeOn(true);
+            driveRobot(0, 0, 0);
+        }
+        else if (currentActionIndex == 3){
+            driveRobot(0,1,0);
+        }
+        else if (currentActionIndex == 4){
+            driveRobot(0,0,1);
+        }
         else {
+            turnIntakeOn(false);
             driveRobot(0,0,0);
+
+            return;
         }
 
 
