@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -57,6 +58,7 @@ public class BasicTelop4224 extends OpMode
 
     //keeps track of time
     private ElapsedTime runtime = new ElapsedTime();
+    private IMU imu = null;
     private DcMotor frontLeftDrive = null;
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
@@ -81,6 +83,7 @@ public class BasicTelop4224 extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
+        imu = hardwareMap.get(IMU.class, Constants.IMU);
         frontLeftDrive  = hardwareMap.get(DcMotor.class, Constants.FRONT_LEFT_MOTOR);
         backLeftDrive = hardwareMap.get(DcMotor.class, Constants.BACK_LEFT_MOTOR);
         frontRightDrive = hardwareMap.get(DcMotor.class, Constants.FRONT_RIGHT_MOTOR);
@@ -92,6 +95,7 @@ public class BasicTelop4224 extends OpMode
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
+        imu.initialize(new IMU.Parameters(Constants.IMU_ORIENTATION));
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -112,22 +116,28 @@ public class BasicTelop4224 extends OpMode
     @Override
     public void start() {
         runtime.reset();
+        
     }
+
 
     /*
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
     @Override
     public void loop() {
-        double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
-        double x = gamepad1.left_stick_x;
+        double heading = imu.getRobotYawPitchRollAngles().getYaw();
+        double yInput = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
+        double xInput = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
 
+        double x  = (xInput * Math.sin (-heading) ) - (yInput * Math.cos (-heading));
+        double y  = (xInput * Math.cos (-heading) ) + (yInput * Math.sin (-heading));
 
-        frontLeftDrive.setPower((y + x + rx) * driveSpeed);
-        backLeftDrive.setPower((y - x + rx) * driveSpeed);
-        frontRightDrive.setPower((y - x - rx) * driveSpeed);
-        backRightDrive.setPower((y + x - rx) * driveSpeed);
+        double denominator = Math.max(y + x + rx, 1);
+        frontLeftDrive.setPower((y + x + rx) / denominator * driveSpeed);
+        backLeftDrive.setPower((y - x + rx) / denominator * driveSpeed);
+        frontRightDrive.setPower((y - x - rx) / denominator * driveSpeed);
+        backRightDrive.setPower((y + x - rx) / denominator * driveSpeed);
 
         telemetry.addData("front Left Power: ",y + x + rx);
         telemetry.addData("back Left Power: ",y - x + rx);
@@ -140,8 +150,11 @@ public class BasicTelop4224 extends OpMode
 
 
 
-
+        if (gamepad1.options){
+            imu.resetYaw();
+        }
         if (gamepad1.right_bumper) {
+
 
             intakeMotor.setPower(Constants.INTAKE_SPEED);
 

@@ -168,15 +168,20 @@ public class BasicAuto4224 extends OpMode
      * Code to run ONCE after the driver hits STOP
      */
     @Override
-    public void stop() {
+    public void stop()
+    {
+
     }
 
+
     public void driveRobot(double x, double y, double rx){
-        frontLeftDrive.setPower((y + x + rx) * Constants.DRIVE_SPEED);
-        backLeftDrive.setPower((y - x + rx) * Constants.DRIVE_SPEED);
-        frontRightDrive.setPower((y - x - rx) * Constants.DRIVE_SPEED);
-        backRightDrive.setPower((y + x - rx) * Constants.DRIVE_SPEED);
+        double denominator = Math.max(y + x + rx, 1);
+        frontLeftDrive.setPower((y + x + rx) / denominator * Constants.DRIVE_SPEED);
+        backLeftDrive.setPower((y - x + rx) / denominator * Constants.DRIVE_SPEED);
+        frontRightDrive.setPower((y - x - rx) / denominator * Constants.DRIVE_SPEED);
+        backRightDrive.setPower((y + x - rx) / denominator * Constants.DRIVE_SPEED);
     }
+
     public void turnIntakeOn(boolean on){
         if (on == true){
             intakeMotor.setPower(Constants.INTAKE_SPEED);
