@@ -27,15 +27,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -51,19 +49,10 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Iterative OpMode", group="Iterative OpMode")
-@Disabled
-public class BasicOpMode_Iterative extends OpMode
-{
-    // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-    public double MOVEMENT_SPEED = 1;
+@TeleOp(name="emergencyStop", group="boom")
+public class emergencyStop extends OpMode
+{ //selfDestruct == boom!
 
-
-    public DcMotor back_left_wheel;
-    public DcMotor front_left_wheel;
-    public DcMotor back_right_wheel;
-    public DcMotor front_right_wheel;
 
 
     /*
@@ -71,58 +60,25 @@ public class BasicOpMode_Iterative extends OpMode
      */
     @Override
     public void init() {
-        telemetry.addData("Status", "Initialized");
 
-
-        back_left_wheel = hardwareMap.get(DcMotor.class, "back_left_wheel");
-        back_right_wheel = hardwareMap.get(DcMotor.class, "back_right_wheel");
-        front_left_wheel = hardwareMap.get(DcMotor.class, "front_left_wheel");
-        front_right_wheel = hardwareMap.get(DcMotor.class, "front_right_wheel");
-
-
-        telemetry.addData("Status", "Initialized");
     }
 
-    @Override
-    public void init_loop() {
-    }
+
 
     /*
      * Code to run ONCE when the driver hits START
      */
     @Override
     public void start() {
-        runtime.reset();
+        
     }
+
 
     /*
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
     @Override
     public void loop() {
-        // Setup a variable for each drive wheel to save power level for telemetry
-        double leftPower;
-        double rightPower;
-
-
-            // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
-            double z = gamepad1.left_stick_x; // Remember, Y stick is reversed!
-            double x = -gamepad1.left_stick_y * 1.1; // Counteract imperfect strafing
-            double ry = -gamepad1.right_stick_x;
-
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio, but only when
-            // at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(z) + Math.abs(x) + Math.abs(ry), 1);
-            double frontLeftPower = (z + x + ry) / denominator;
-            double frontRightPower = (z - x - ry) / denominator;
-            double backLeftPower = (z - x + ry) / denominator;
-            double backRightPower = (z + x - ry) / denominator;
-
-            front_left_wheel.setPower(frontLeftPower * MOVEMENT_SPEED);
-            front_right_wheel.setPower(frontRightPower * MOVEMENT_SPEED);
-            back_left_wheel.setPower(backLeftPower * MOVEMENT_SPEED);
-            back_right_wheel.setPower(backRightPower * MOVEMENT_SPEED);
 
 
     }

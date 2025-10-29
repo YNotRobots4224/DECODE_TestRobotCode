@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -53,6 +52,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name="Basic Auto 4224", group="Iterative OpMode")
 public class BasicAuto4224 extends OpMode
 {
+
+    private enum FlyWheelState {
+        Off,
+        SlowSpeed,
+        FastSpeed,
+    }
+
     // Declare OpMode members.
 
     //keeps track of time
@@ -104,6 +110,13 @@ public class BasicAuto4224 extends OpMode
         flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
+
+        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
@@ -145,10 +158,15 @@ public class BasicAuto4224 extends OpMode
         else if (currentActionIndex == 3){
             driveRobot(0,1,0);
         }
-        else if (currentActionIndex == 4){
-            driveRobot(0,0,1);
+        else if (currentActionIndex == 4) {
+            driveRobot(0, 0, 1);
+        }
+        else if (currentActionIndex == 5 ){
+            turnFlywheelON(FlyWheelState.FastSpeed);
+
         }
         else {
+            turnFlywheelON(FlyWheelState.Off);
             turnIntakeOn(false);
             driveRobot(0,0,0);
 
@@ -175,11 +193,11 @@ public class BasicAuto4224 extends OpMode
 
 
     public void driveRobot(double x, double y, double rx){
-        double denominator = Math.max(y + x + rx, 1);
-        frontLeftDrive.setPower((y + x + rx) / denominator * Constants.DRIVE_SPEED);
-        backLeftDrive.setPower((y - x + rx) / denominator * Constants.DRIVE_SPEED);
-        frontRightDrive.setPower((y - x - rx) / denominator * Constants.DRIVE_SPEED);
-        backRightDrive.setPower((y + x - rx) / denominator * Constants.DRIVE_SPEED);
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        frontLeftDrive.setPower((y + x + rx) / denominator * driveSpeed);
+        backLeftDrive.setPower((y - x + rx) / denominator * driveSpeed);
+        frontRightDrive.setPower((y - x - rx) / denominator * driveSpeed);
+        backRightDrive.setPower((y + x - rx) / denominator * driveSpeed);
     }
 
     public void turnIntakeOn(boolean on){
@@ -190,4 +208,19 @@ public class BasicAuto4224 extends OpMode
             intakeMotor.setPower(0);
         }
     }
+    public void turnFlywheelON(FlyWheelState state){
+        if (state == FlyWheelState.FastSpeed){
+            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
+            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
+        }
+        else if (state == FlyWheelState.SlowSpeed){
+            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
+            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
+        }
+        else if (state == FlyWheelState.Off){
+            flywheelLeftMotor.setPower(0);
+            flywheelRightMotor.setPower(0);
+        }
+    }
+
 }
