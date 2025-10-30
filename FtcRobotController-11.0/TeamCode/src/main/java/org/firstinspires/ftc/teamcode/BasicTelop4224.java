@@ -62,7 +62,8 @@ public class BasicTelop4224 extends OpMode
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
-    private DcMotor intakeMotor = null;
+    private DcMotor intakeRightMotor = null;
+    private DcMotor intakeLeftMotor = null;
     private DcMotor flywheelRightMotor = null;
     private DcMotor flywheelLeftMotor = null;
     private boolean isFastFlywheelOn = false;
@@ -88,26 +89,31 @@ public class BasicTelop4224 extends OpMode
         backLeftDrive = hardwareMap.get(DcMotor.class, Constants.BACK_LEFT_MOTOR);
         frontRightDrive = hardwareMap.get(DcMotor.class, Constants.FRONT_RIGHT_MOTOR);
         backRightDrive = hardwareMap.get(DcMotor.class, Constants.BACK_RIGHT_MOTOR);
-        intakeMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_MOTOR);
+        intakeLeftMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_LEFT_MOTOR);
+        intakeRightMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_RIGHT_MOTOR);
         flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
         flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flywheelLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flywheelRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -158,10 +164,12 @@ public class BasicTelop4224 extends OpMode
         if (gamepad1.right_bumper) {
 
 
-            intakeMotor.setPower(Constants.INTAKE_SPEED);
+            intakeLeftMotor.setPower(Constants.INTAKE_LEFT_SPEED);
+            intakeRightMotor.setPower(Constants.INTAKE_RIGHT_SPEED);
 
         } else {
-            intakeMotor.setPower(0);
+            intakeLeftMotor.setPower(0);
+            intakeRightMotor.setPower(0);
 
         }
 

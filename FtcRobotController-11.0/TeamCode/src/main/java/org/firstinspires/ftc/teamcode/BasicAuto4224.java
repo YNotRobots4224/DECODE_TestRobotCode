@@ -67,7 +67,8 @@ public class BasicAuto4224 extends OpMode
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
-    private DcMotor intakeMotor = null;
+    private DcMotor intakeRightMotor = null;
+    private DcMotor intakeLeftMotor = null;
     private DcMotor flywheelRightMotor = null;
     private DcMotor flywheelLeftMotor = null;
     private double driveSpeed = 1;
@@ -95,7 +96,8 @@ public class BasicAuto4224 extends OpMode
         backLeftDrive = hardwareMap.get(DcMotor.class, Constants.BACK_LEFT_MOTOR);
         frontRightDrive = hardwareMap.get(DcMotor.class, Constants.FRONT_RIGHT_MOTOR);
         backRightDrive = hardwareMap.get(DcMotor.class, Constants.BACK_RIGHT_MOTOR);
-        intakeMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_MOTOR);
+        intakeRightMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_LEFT_MOTOR);
+        intakeLeftMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_RIGHT_MOTOR);
         flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
         flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
 
@@ -106,26 +108,31 @@ public class BasicAuto4224 extends OpMode
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
-        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flywheelLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flywheelRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
-        actionTimes = new double[5];
+        actionTimes = new double[6];
         actionTimes[0] = .2;
         actionTimes[1] = .23;
         actionTimes[2] = 2;
         actionTimes[3] = .25;
         actionTimes[4] = .25;
+        actionTimes[5] = .25;
         actionEndTime = actionTimes[0];
     }
 
@@ -202,10 +209,12 @@ public class BasicAuto4224 extends OpMode
 
     public void turnIntakeOn(boolean on){
         if (on == true){
-            intakeMotor.setPower(Constants.INTAKE_SPEED);
+            intakeLeftMotor.setPower(Constants.INTAKE_LEFT_SPEED);
+            intakeRightMotor.setPower(Constants.INTAKE_RIGHT_SPEED);
         }
         else {
-            intakeMotor.setPower(0);
+            intakeRightMotor.setPower(0);
+            intakeLeftMotor.setPower(0);
         }
     }
     public void turnFlywheelON(FlyWheelState state){
