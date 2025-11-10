@@ -14,8 +14,8 @@ public class Constants {
     public final static String FRONT_RIGHT_MOTOR = "front_right_drive"; // port 2
     public final static String BACK_LEFT_MOTOR = "back_left_drive"; // port 0
     public final static String BACK_RIGHT_MOTOR = "back_right_drive"; //port 1
-    public final static String INTAKE_LEFT_MOTOR = "intake_motor"; // expansion port 0
-    public final static String INTAKE_RIGHT_MOTOR = "intake_motor"; // expansion port 0
+    public final static String INTAKE_LEFT_MOTOR = "intake_left_motor"; // expansion port 0
+    public final static String INTAKE_RIGHT_MOTOR = "intake_right_motor"; // expansion port 3
     public final static String FLYWHEEL_LEFT_MOTOR = "flywheel_left_motor"; // expansion port 1
     public final static String FLYWHEEL_RIGHT_MOTOR = "flywheel_right_motor";// expansion port 2
     private final static RevHubOrientationOnRobot.LogoFacingDirection IMU_LOGO_DIRECTION = RevHubOrientationOnRobot.LogoFacingDirection.UP;

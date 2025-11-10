@@ -101,8 +101,8 @@ public class BasicTelop4224 extends OpMode
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        intakeLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        intakeRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
