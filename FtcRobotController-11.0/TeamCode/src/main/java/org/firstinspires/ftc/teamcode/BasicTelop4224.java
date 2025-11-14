@@ -170,16 +170,27 @@ public class BasicTelop4224 extends OpMode
             intakeLeftMotor.setPower(Constants.INTAKE_LEFT_SPEED);
             intakeRightMotor.setPower(Constants.INTAKE_RIGHT_SPEED);
 
+        } else if (gamepad1.right_trigger > 0.25) {
+
+
+
+            intakeLeftMotor.setPower(Constants.INTAKE_LEFT_SPEED);
+            intakeRightMotor.setPower(Constants.INTAKE_RIGHT_SPEED);
+
         } else {
             intakeLeftMotor.setPower(0);
             intakeRightMotor.setPower(0);
-
         }
+
+
+        
+
+
 
        if (gamepad1.yWasPressed()){
            isFastFlywheelOn = !isFastFlywheelOn;
        }
-       if (gamepad1.bWasPressed()){
+       if (gamepad1.xWasPressed()){
             isSlowFlywheelOn = !isSlowFlywheelOn;
         }
 
