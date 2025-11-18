@@ -66,10 +66,13 @@ public class BasicTelop4224 extends OpMode
     private DcMotor intakeLeftMotor = null;
     private DcMotor flywheelRightMotor = null;
     private DcMotor flywheelLeftMotor = null;
+    private Servo servoBlocker = null;
     private boolean isFastFlywheelOn = false;
     private boolean isSlowFlywheelOn = false;
     private boolean isSlowModeOn = false;
     private double driveSpeed = Constants.DRIVE_SPEED;
+    private boolean isServoOpen = false;
+    private boolean aWasPressed = false;
 
 
 
@@ -93,6 +96,7 @@ public class BasicTelop4224 extends OpMode
         intakeRightMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_RIGHT_MOTOR);
         flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
         flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
+        servoBlocker = hardwareMap.get(Servo.class, Constants.SERVO_BLOCKER);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -208,7 +212,17 @@ public class BasicTelop4224 extends OpMode
            flywheelLeftMotor.setPower(0);
            flywheelRightMotor.setPower(0);
        }
+        if (gamepad1.a && !aWasPressed) {
+            isServoOpen = !isServoOpen;
 
+            if (isServoOpen) {
+                servoBlocker.setPosition(0.6); // Open position
+            } else {
+                servoBlocker.setPosition(0.0); // Closed position
+            }
+        }
+
+        aWasPressed = gamepad1.a; // Update the button state
 
 
 
@@ -224,6 +238,7 @@ public class BasicTelop4224 extends OpMode
        }
 
     }
+
 
     /*
      * Code to run ONCE after the driver hits STOP
