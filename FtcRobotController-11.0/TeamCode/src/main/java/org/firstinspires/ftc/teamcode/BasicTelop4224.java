@@ -178,8 +178,8 @@ public class BasicTelop4224 extends OpMode
 
 
 
-            intakeLeftMotor.setPower(Constants.INTAKE_LEFT_SPEED);
-            intakeRightMotor.setPower(Constants.INTAKE_RIGHT_SPEED);
+            intakeLeftMotor.setPower(-Constants.INTAKE_LEFT_SPEED);
+            intakeRightMotor.setPower(-Constants.INTAKE_RIGHT_SPEED);
 
         } else {
             intakeLeftMotor.setPower(0);
