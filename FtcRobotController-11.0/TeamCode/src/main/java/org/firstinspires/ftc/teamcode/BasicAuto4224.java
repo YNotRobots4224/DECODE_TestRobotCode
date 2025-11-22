@@ -126,13 +126,9 @@ public class BasicAuto4224 extends OpMode
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
-        actionTimes = new double[6];
+        actionTimes = new double[1];
         actionTimes[0] = .2;
-        actionTimes[1] = .23;
-        actionTimes[2] = 2;
-        actionTimes[3] = .25;
-        actionTimes[4] = .25;
-        actionTimes[5] = .25;
+
         actionEndTime = actionTimes[0];
     }
 
@@ -155,30 +151,28 @@ public class BasicAuto4224 extends OpMode
         if (currentActionIndex == 0){
             driveRobot(-1,0,0);
         }
-        else if (currentActionIndex == 1){
-            driveRobot(0,-1,0);
-        }
-        else if (currentActionIndex == 2) {
-            turnIntakeOn(true);
-            driveRobot(0, 0, 0);
-        }
-        else if (currentActionIndex == 3){
-            driveRobot(0,1,0);
-        }
-        else if (currentActionIndex == 4) {
-            driveRobot(0, 0, 1);
-        }
-        else if (currentActionIndex == 5 ){
-            turnFlywheelON(FlyWheelState.FastSpeed);
+        //else if (currentActionIndex == 1){
+            //driveRobot(0,-1,0);
+       // }
+        //else if (currentActionIndex == 2) {
+           // turnIntakeOn(true);
+            //driveRobot(0, 0, 0);
+        //}
+        //else if (currentActionIndex == 3){
+            //driveRobot(0,1,0);
+        //}
+        //else if (currentActionIndex == 4) {
+           // driveRobot(0, 0, 1);
+        //}
+        //else if (currentActionIndex == 5 ){
+           // turnFlywheelON(FlyWheelState.FastSpeed);
 
-        }
-        else {
-            turnFlywheelON(FlyWheelState.Off);
-            turnIntakeOn(false);
-            driveRobot(0,0,0);
+       // }
+       // else {
+           // driveRobot(0,0,0);
 
-            return;
-        }
+       //     return;
+       // }
 
 
         if (runtime.seconds() > actionEndTime){

@@ -7,8 +7,8 @@ public class Constants {
     public final static double INTAKE_LEFT_SPEED = 1;
     public final static double DRIVE_SPEED = 1;
     public final static double SLOW_DRIVE_SPEED = 1;
-    public final static double FLYWHEEL_SPEED_TWO = .8;
-    public final static double FLYWHEEL_SPEED_ONE = 0;
+    public final static double FLYWHEEL_SPEED_TWO = .85;
+    public final static double FLYWHEEL_SPEED_ONE = 1;
     public final static String IMU = "imu";// I2C 0
     public final static String FRONT_LEFT_MOTOR = "front_left_drive";// port 3
     public final static String FRONT_RIGHT_MOTOR = "front_right_drive"; // port 2
