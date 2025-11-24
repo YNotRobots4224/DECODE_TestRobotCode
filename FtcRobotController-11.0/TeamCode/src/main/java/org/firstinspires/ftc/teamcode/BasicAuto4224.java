@@ -127,7 +127,7 @@ public class BasicAuto4224 extends OpMode
         telemetry.addData("Status", "Initialized");
 
         actionTimes = new double[1];
-        actionTimes[0] = .2;
+        actionTimes[0] = .08;
 
         actionEndTime = actionTimes[0];
     }
@@ -148,31 +148,32 @@ public class BasicAuto4224 extends OpMode
     @Override
     public void loop() {
 
-        if (currentActionIndex == 0){
-            driveRobot(-1,0,0);
+        if (currentActionIndex == 0) {
+            driveRobot(0, 1, 0);
         }
         //else if (currentActionIndex == 1){
-            //driveRobot(0,-1,0);
-       // }
+        //driveRobot(0,-1,0);
+        // }
         //else if (currentActionIndex == 2) {
-           // turnIntakeOn(true);
-            //driveRobot(0, 0, 0);
+        // turnIntakeOn(true);
+        //driveRobot(0, 0, 0);
         //}
         //else if (currentActionIndex == 3){
-            //driveRobot(0,1,0);
+        //driveRobot(0,1,0);
         //}
         //else if (currentActionIndex == 4) {
-           // driveRobot(0, 0, 1);
+        // driveRobot(0, 0, 1);
         //}
         //else if (currentActionIndex == 5 ){
-           // turnFlywheelON(FlyWheelState.FastSpeed);
+        // turnFlywheelON(FlyWheelState.FastSpeed);
 
-       // }
-       // else {
-           // driveRobot(0,0,0);
+        // }
 
-       //     return;
-       // }
+    else {
+           driveRobot(0,0,0);
+
+            return;
+        }
 
 
         if (runtime.seconds() > actionEndTime){
