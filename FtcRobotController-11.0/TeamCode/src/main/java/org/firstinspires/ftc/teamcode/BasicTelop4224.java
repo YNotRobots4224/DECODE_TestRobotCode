@@ -73,7 +73,7 @@ public class BasicTelop4224 extends OpMode
     private double driveSpeed = Constants.DRIVE_SPEED;
     private boolean isServoOpen = false;
     private boolean aWasPressed = false;
-    private boolean isFirstDriver = false;
+
 
 
     /*
@@ -134,7 +134,7 @@ public class BasicTelop4224 extends OpMode
     @Override
     public void start() {
         runtime.reset();
-        
+
     }
 
 
@@ -143,26 +143,6 @@ public class BasicTelop4224 extends OpMode
      */
     @Override
     public void loop() {
-        if (gamepad1.backWasPressed() || gamepad2.backWasPressed()){
-            isFirstDriver = !isFirstDriver;
-        }
-        if (isFirstDriver){
-            FirstDriver();
-        }
-        else {
-            SecondDriver();
-        }
-    }
-
-
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-    @Override
-    public void stop() {
-    }
-
-    public void FirstDriver () {
         double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
@@ -258,101 +238,13 @@ public class BasicTelop4224 extends OpMode
         }
 
     }
-    public void SecondDriver () {
-        double y = -gamepad2.left_stick_y; // Remember, Y stick is reversed!
-        double x = gamepad2.left_stick_x;
-        double rx = gamepad2.right_stick_x;
 
 
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        backRightDrive.setPower((y + x + rx) / denominator * driveSpeed);
-        frontRightDrive.setPower((y - x + rx) / denominator * driveSpeed);
-        backLeftDrive.setPower((y - x - rx) / denominator * driveSpeed);
-        frontLeftDrive.setPower((y + x - rx) / denominator * driveSpeed);
-
-        telemetry.addData("front Left Power: ",y + x + rx);
-        telemetry.addData("back Left Power: ",y - x + rx);
-        telemetry.addData("front Right Power: ",y - x - rx);
-        telemetry.addData("back Right Power: ",y + x - rx);
-
-        telemetry.update();
-
-
-
-
-
-
-
-
-        if (gamepad2.right_bumper) {
-
-
-            intakeLeftMotor.setPower(Constants.INTAKE_LEFT_SPEED);
-            intakeRightMotor.setPower(Constants.INTAKE_RIGHT_SPEED);
-
-        } else if (gamepad2.right_trigger > 0.25) {
-
-
-
-            intakeLeftMotor.setPower(-Constants.INTAKE_LEFT_SPEED);
-            intakeRightMotor.setPower(-Constants.INTAKE_RIGHT_SPEED);
-
-        } else {
-            intakeLeftMotor.setPower(0);
-            intakeRightMotor.setPower(0);
-        }
-
-
-
-
-
-
-        if (gamepad2.yWasPressed()){
-            isFastFlywheelOn = !isFastFlywheelOn;
-        }
-        if (gamepad2.xWasPressed()){
-            isSlowFlywheelOn = !isSlowFlywheelOn;
-        }
-
-        if (isFastFlywheelOn == true){
-            isSlowFlywheelOn = false;
-            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
-            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
-        }
-        else if (isSlowFlywheelOn == true) {
-            isFastFlywheelOn = false;
-            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
-            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
-        }
-        else {
-            flywheelLeftMotor.setPower(0);
-            flywheelRightMotor.setPower(0);
-        }
-        if (gamepad2.a && !aWasPressed) {
-            isServoOpen = !isServoOpen;
-
-            if (isServoOpen) {
-                servoBlocker.setPosition(0.6); // Open position
-            } else {
-                servoBlocker.setPosition(0.0); // Closed position
-            }
-        }
-
-        aWasPressed = gamepad2.a; // Update the button state
-
-
-
-        if (gamepad2.leftBumperWasPressed()){
-            isSlowModeOn = !isSlowModeOn;
-        }
-        if (isSlowModeOn == true){
-
-            driveSpeed = Constants.SLOW_DRIVE_SPEED;
-        }
-        else {
-            driveSpeed = Constants.DRIVE_SPEED;
-        }
-
+    /*
+     * Code to run ONCE after the driver hits STOP
+     */
+    @Override
+    public void stop() {
     }
 
 }
