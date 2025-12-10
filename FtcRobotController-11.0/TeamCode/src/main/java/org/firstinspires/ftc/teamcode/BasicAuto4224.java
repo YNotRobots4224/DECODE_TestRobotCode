@@ -72,6 +72,7 @@ public class BasicAuto4224 extends OpMode
     private DcMotor flywheelRightMotor = null;
     private DcMotor flywheelLeftMotor = null;
     private double driveSpeed = 1;
+    private double flywheelSpeed = 1;
     private double actionEndTime = 0;
     private double[] actionTimes;
     private int currentActionIndex = 0;
@@ -108,8 +109,11 @@ public class BasicAuto4224 extends OpMode
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        intakeRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        intakeLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE
+
+
+        );
+        intakeRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -126,8 +130,18 @@ public class BasicAuto4224 extends OpMode
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
-        actionTimes = new double[1];
+        actionTimes = new double[11];
         actionTimes[0] = .08;
+        actionTimes[1] = .0475;
+        actionTimes[2] = 5;
+        actionTimes[3] = .001;
+        actionTimes[4] = 1.75;
+        actionTimes[5] = 3;
+        actionTimes[6] = 1.75;
+        actionTimes[7] = 4;
+        actionTimes[8] = 1;
+        actionTimes[9] = 7;
+        actionTimes[10] = .25;
 
         actionEndTime = actionTimes[0];
     }
@@ -151,26 +165,43 @@ public class BasicAuto4224 extends OpMode
         if (currentActionIndex == 0) {
             driveRobot(0, 1, 0);
         }
-        //else if (currentActionIndex == 1){
-        //driveRobot(0,-1,0);
-        // }
-        //else if (currentActionIndex == 2) {
-        // turnIntakeOn(true);
-        //driveRobot(0, 0, 0);
-        //}
-        //else if (currentActionIndex == 3){
-        //driveRobot(0,1,0);
-        //}
-        //else if (currentActionIndex == 4) {
-        // driveRobot(0, 0, 1);
-        //}
-        //else if (currentActionIndex == 5 ){
-        // turnFlywheelON(FlyWheelState.FastSpeed);
-
-        // }
-
-    else {
+        else if (currentActionIndex == 1) {
+            driveRobot(0, 0, -1);
+        }
+        else if (currentActionIndex == 2) {
+            driveRobot(0,0,0);
+            turnFlywheelON(FlyWheelState.FastSpeed);
+        }
+        else if (currentActionIndex == 3) {
+            driveRobot(0, 0, 0);
+        }
+        else if (currentActionIndex == 4) {
+            turnIntakeOn(true);
+        }
+        else if (currentActionIndex == 5) {
+            turnIntakeOn(false);
+            driveRobot(0, 0, 0);
+        }
+        else if (currentActionIndex == 6) {
+            turnIntakeOn(true);
+        }
+        else if (currentActionIndex == 7) {
+            turnIntakeOn(false);
+            turnFlywheelON(FlyWheelState.Off);
+            driveRobot(0, 1, 0);
+        }
+        else if (currentActionIndex == 8) {
+            driveRobot(0, 0, 0);
+        }
+        else if (currentActionIndex == 9) {
+            driveRobot(0, 1, 0);
+        }
+        else if (currentActionIndex == 10) {
+            driveRobot(0, -1, 0);
+        }
+        else {
            driveRobot(0,0,0);
+
 
             return;
         }
@@ -204,8 +235,8 @@ public class BasicAuto4224 extends OpMode
 
     public void turnIntakeOn(boolean on){
         if (on == true){
-            intakeLeftMotor.setPower(Constants.INTAKE_LEFT_SPEED);
-            intakeRightMotor.setPower(Constants.INTAKE_RIGHT_SPEED);
+            intakeLeftMotor.setPower(-Constants.INTAKE_LEFT_SPEED);
+            intakeRightMotor.setPower(-Constants.INTAKE_RIGHT_SPEED);
         }
         else {
             intakeRightMotor.setPower(0);
