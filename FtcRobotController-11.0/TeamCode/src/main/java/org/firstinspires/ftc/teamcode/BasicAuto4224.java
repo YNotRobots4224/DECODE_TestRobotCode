@@ -33,7 +33,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.core.PIDController;
+import org.firstinspires.ftc.teamcode.core.Timer;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -76,7 +80,9 @@ public class BasicAuto4224 extends OpMode
     private double actionEndTime = 0;
     private double[] actionTimes;
     private int currentActionIndex = 0;
-
+    private PIDController turnPidController;
+    private Timer timer;
+    private IMU imu = null;
 
 
   
@@ -88,6 +94,9 @@ public class BasicAuto4224 extends OpMode
      */
     @Override
     public void init() {
+        turnPidController = new PIDController(0.2,20, 0, 5, 0);
+        timer = new Timer();
+
         telemetry.addData("Status", "Initialized");
 
         // Initialize the hardware variables. Note that the strings used here as parameters
@@ -101,6 +110,7 @@ public class BasicAuto4224 extends OpMode
         intakeLeftMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_RIGHT_MOTOR);
         flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
         flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
+        imu = hardwareMap.get(IMU.class, Constants.IMU);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -116,6 +126,7 @@ public class BasicAuto4224 extends OpMode
         intakeRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        imu.initialize(new IMU.Parameters(Constants.IMU_ORIENTATION));
 
 
         intakeRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -130,18 +141,17 @@ public class BasicAuto4224 extends OpMode
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
-        actionTimes = new double[11];
-        actionTimes[0] = .08;
+        actionTimes = new double[10];
+        actionTimes[0] = .1;
         actionTimes[1] = .0475;
         actionTimes[2] = 5;
         actionTimes[3] = .001;
-        actionTimes[4] = 1.75;
+        actionTimes[4] = 1.5;
         actionTimes[5] = 3;
-        actionTimes[6] = 1.75;
-        actionTimes[7] = 4;
-        actionTimes[8] = 1;
-        actionTimes[9] = 7;
-        actionTimes[10] = .25;
+        actionTimes[6] = 4;
+        actionTimes[7] = 1;
+        actionTimes[8] = 7;
+        actionTimes[9] = .25;
 
         actionEndTime = actionTimes[0];
     }
@@ -154,6 +164,9 @@ public class BasicAuto4224 extends OpMode
     @Override
     public void start() {
         runtime.reset();
+
+        imu.resetYaw();
+
     }
 
     /*
@@ -161,46 +174,47 @@ public class BasicAuto4224 extends OpMode
      */
     @Override
     public void loop() {
+        timer.Update();
 
         if (currentActionIndex == 0) {
             driveRobot(0, 1, 0);
         }
         else if (currentActionIndex == 1) {
-            driveRobot(0, 0, -1);
+            driveRobot(0, 0, -21);
         }
         else if (currentActionIndex == 2) {
-            driveRobot(0,0,0);
+            driveRobot(0,0,-21);
             turnFlywheelON(FlyWheelState.FastSpeed);
         }
         else if (currentActionIndex == 3) {
-            driveRobot(0, 0, 0);
+            driveRobot(0, 0, -21);
         }
         else if (currentActionIndex == 4) {
             turnIntakeOn(true);
         }
         else if (currentActionIndex == 5) {
             turnIntakeOn(false);
-            driveRobot(0, 0, 0);
+            driveRobot(0, 0, -21);
         }
         else if (currentActionIndex == 6) {
-            turnIntakeOn(true);
+            turnFlywheelON(FlyWheelState.Off);
+            driveRobot(0, 1, -21);
         }
         else if (currentActionIndex == 7) {
-            turnIntakeOn(false);
-            turnFlywheelON(FlyWheelState.Off);
-            driveRobot(0, 1, 0);
+            driveRobot(0, 0, -21);
         }
         else if (currentActionIndex == 8) {
-            driveRobot(0, 0, 0);
+            driveRobot(0, 1, -21);
         }
         else if (currentActionIndex == 9) {
-            driveRobot(0, 1, 0);
+            driveRobot(0, -1, -21);
         }
         else if (currentActionIndex == 10) {
-            driveRobot(0, -1, 0);
+            driveRobot(0,0,0);
         }
         else {
-           driveRobot(0,0,0);
+           driveRobot(0,0,-21);
+
 
 
             return;
@@ -225,7 +239,9 @@ public class BasicAuto4224 extends OpMode
     }
 
 
-    public void driveRobot(double x, double y, double rx){
+    public void driveRobot(double x, double y, double targetRotation){
+        double rx = turnPidController.Calculate(-imu.getRobotYawPitchRollAngles().getYaw(),targetRotation, timer.deltaTime) / 20;
+        telemetry.addData("rx: ",rx);
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         frontLeftDrive.setPower((y + x + rx) / denominator * driveSpeed);
         backLeftDrive.setPower((y - x + rx) / denominator * driveSpeed);
