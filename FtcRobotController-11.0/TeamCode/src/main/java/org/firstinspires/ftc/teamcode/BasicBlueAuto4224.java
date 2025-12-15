@@ -54,7 +54,7 @@ import org.firstinspires.ftc.teamcode.core.Timer;
  */
 
 @Autonomous(name="Basic Auto 4224", group="Iterative OpMode")
-public class BasicAuto4224 extends OpMode
+public class BasicBlueAuto4224 extends OpMode
 {
 
     private enum FlyWheelState {

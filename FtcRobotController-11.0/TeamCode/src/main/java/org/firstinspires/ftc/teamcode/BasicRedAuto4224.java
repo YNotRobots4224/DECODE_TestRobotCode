@@ -29,13 +29,15 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.core.PIDController;
+import org.firstinspires.ftc.teamcode.core.Timer;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -51,9 +53,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic Telop 4224", group="Iterative OpMode")
-public class BasicTelop4224 extends OpMode
+@Autonomous(name="Basic Auto 4224", group="Iterative OpMode")
+public class BasicRedAuto4224 extends OpMode
 {
+
+    private enum FlyWheelState {
+        Off,
+        SlowSpeed,
+        FastSpeed,
+    }
+
     // Declare OpMode members.
 
     //keeps track of time
@@ -66,12 +75,17 @@ public class BasicTelop4224 extends OpMode
     private DcMotor intakeLeftMotor = null;
     private DcMotor flywheelRightMotor = null;
     private DcMotor flywheelLeftMotor = null;
-    private Servo servoBlocker = null;
-    private boolean isFastFlywheelOn = false;
-    private boolean isSlowFlywheelOn = false;
-    private boolean isSlowModeOn = false;
-    private double driveSpeed = Constants.DRIVE_SPEED;
+    private double driveSpeed = 1;
+    private double flywheelSpeed = 1;
+    private double actionEndTime = 0;
+    private double[] actionTimes;
+    private int currentActionIndex = 0;
+    private PIDController turnPidController;
+    private Timer timer;
+    private IMU imu = null;
 
+
+  
 
 
 
@@ -80,9 +94,10 @@ public class BasicTelop4224 extends OpMode
      */
     @Override
     public void init() {
+        turnPidController = new PIDController(0.2,20, 0, 5, 0);
+        timer = new Timer();
+
         telemetry.addData("Status", "Initialized");
-
-
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
@@ -91,11 +106,11 @@ public class BasicTelop4224 extends OpMode
         backLeftDrive = hardwareMap.get(DcMotor.class, Constants.BACK_LEFT_MOTOR);
         frontRightDrive = hardwareMap.get(DcMotor.class, Constants.FRONT_RIGHT_MOTOR);
         backRightDrive = hardwareMap.get(DcMotor.class, Constants.BACK_RIGHT_MOTOR);
-        intakeLeftMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_LEFT_MOTOR);
-        intakeRightMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_RIGHT_MOTOR);
+        intakeRightMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_LEFT_MOTOR);
+        intakeLeftMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_RIGHT_MOTOR);
         flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
         flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
-        servoBlocker = hardwareMap.get(Servo.class, Constants.SERVO_BLOCKER);
+        imu = hardwareMap.get(IMU.class, Constants.IMU);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -111,6 +126,8 @@ public class BasicTelop4224 extends OpMode
         intakeRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        imu.initialize(new IMU.Parameters(Constants.IMU_ORIENTATION));
+
 
         intakeRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakeLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -123,6 +140,12 @@ public class BasicTelop4224 extends OpMode
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
+
+        actionTimes = new double[2
+                ];
+        actionTimes[0] = .8;
+        actionTimes[1] = 5;
+        actionEndTime = actionTimes[0];
     }
 
 
@@ -134,115 +157,83 @@ public class BasicTelop4224 extends OpMode
     public void start() {
         runtime.reset();
 
-    }
+        imu.resetYaw();
 
+    }
 
     /*
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
     @Override
     public void loop() {
-        double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
-        double x = gamepad1.left_stick_x;
-        double rx = gamepad1.right_stick_x;
+        timer.Update();
 
-
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        frontLeftDrive.setPower((y + x + rx) / denominator * driveSpeed);
-        backLeftDrive.setPower((y - x + rx) / denominator * driveSpeed);
-        frontRightDrive.setPower((y - x - rx) / denominator * driveSpeed);
-        backRightDrive.setPower((y + x - rx) / denominator * driveSpeed);
-
-        telemetry.addData("front Left Power: ",y + x + rx);
-        telemetry.addData("back Left Power: ",y - x + rx);
-        telemetry.addData("front Right Power: ",y - x - rx);
-        telemetry.addData("back Right Power: ",y + x - rx);
-
-        telemetry.update();
-
-
-
-
-
-
-
-
-        if (gamepad1.right_bumper) {
-
-
-            intakeLeftMotor.setPower(Constants.INTAKE_LEFT_SPEED);
-            intakeRightMotor.setPower(Constants.INTAKE_RIGHT_SPEED);
-
-        } else if (gamepad1.right_trigger > 0.25) {
-
-
-
-            intakeLeftMotor.setPower(-Constants.INTAKE_LEFT_SPEED);
-            intakeRightMotor.setPower(-Constants.INTAKE_RIGHT_SPEED);
-
-        } else {
-            intakeLeftMotor.setPower(0);
-            intakeRightMotor.setPower(0);
+        if (currentActionIndex == 0) {
+            driveRobot(0, 1, 0);
         }
-
-
-
-
-
-
-        if (gamepad1.yWasPressed()){
-            isFastFlywheelOn = !isFastFlywheelOn;
-        }
-        if (gamepad1.xWasPressed()){
-            isSlowFlywheelOn = !isSlowFlywheelOn;
-        }
-
-        if (isFastFlywheelOn == true){
-            isSlowFlywheelOn = false;
-            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
-            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
-        }
-        else if (isSlowFlywheelOn == true) {
-            isFastFlywheelOn = false;
-            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
-            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
+        else if (currentActionIndex == 1) {
+            driveRobot(0,0,0);
         }
         else {
-            flywheelLeftMotor.setPower(0);
-            flywheelRightMotor.setPower(0);
+           driveRobot(0,0,-21);
+
+
+
+            return;
         }
 
 
-            if (gamepad1.a) {
-                servoBlocker.setPosition(0.6); // Open position
-            } else {
-                servoBlocker.setPosition(0.0); // Closed position
+        if (runtime.seconds() > actionEndTime){
+            currentActionIndex++;
+            if(currentActionIndex < actionTimes.length){
+                actionEndTime += actionTimes[currentActionIndex];
             }
-
-
-
-
-
-
-        if (gamepad1.leftBumperWasPressed()){
-            isSlowModeOn = !isSlowModeOn;
         }
-        if (isSlowModeOn == true){
-
-            driveSpeed = Constants.SLOW_DRIVE_SPEED;
-        }
-        else {
-            driveSpeed = Constants.DRIVE_SPEED;
-        }
-
     }
-
 
     /*
      * Code to run ONCE after the driver hits STOP
      */
     @Override
-    public void stop() {
+    public void stop()
+    {
+
+    }
+
+
+    public void driveRobot(double x, double y, double targetRotation){
+        double rx = turnPidController.Calculate(-imu.getRobotYawPitchRollAngles().getYaw(),targetRotation, timer.deltaTime) / 20;
+        telemetry.addData("rx: ",rx);
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        frontLeftDrive.setPower((y + x + rx) / denominator * driveSpeed);
+        backLeftDrive.setPower((y - x + rx) / denominator * driveSpeed);
+        frontRightDrive.setPower((y - x - rx) / denominator * driveSpeed);
+        backRightDrive.setPower((y + x - rx) / denominator * driveSpeed);
+    }
+
+    public void turnIntakeOn(boolean on){
+        if (on == true){
+            intakeLeftMotor.setPower(-Constants.INTAKE_LEFT_SPEED);
+            intakeRightMotor.setPower(-Constants.INTAKE_RIGHT_SPEED);
+        }
+        else {
+            intakeRightMotor.setPower(0);
+            intakeLeftMotor.setPower(0);
+        }
+    }
+    public void turnFlywheelON(FlyWheelState state){
+        if (state == FlyWheelState.FastSpeed){
+            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
+            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
+        }
+        else if (state == FlyWheelState.SlowSpeed){
+            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
+            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
+        }
+        else if (state == FlyWheelState.Off){
+            flywheelLeftMotor.setPower(0);
+            flywheelRightMotor.setPower(0);
+        }
     }
 
 }
