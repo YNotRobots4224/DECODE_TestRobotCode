@@ -53,7 +53,7 @@ import org.firstinspires.ftc.teamcode.core.Timer;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Basic Auto 4224", group="Iterative OpMode")
+@Autonomous(name="Basic Red Auto 4224", group="Iterative OpMode")
 public class BasicRedAuto4224 extends OpMode
 {
 

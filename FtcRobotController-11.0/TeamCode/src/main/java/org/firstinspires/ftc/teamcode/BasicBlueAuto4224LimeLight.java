@@ -53,8 +53,8 @@ import org.firstinspires.ftc.teamcode.core.Timer;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Basic Blue Auto 4224", group="Iterative OpMode")
-public class BasicBlueAuto4224 extends OpMode
+@Autonomous(name="Basic Blue Auto 4224 Lime Light", group="Iterative OpMode")
+public class BasicBlueAuto4224LimeLight extends OpMode
 {
 
     private enum FlyWheelState {
@@ -71,15 +71,7 @@ public class BasicBlueAuto4224 extends OpMode
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
-    private DcMotor intakeRightMotor = null;
-    private DcMotor intakeLeftMotor = null;
-    private DcMotor flywheelRightMotor = null;
-    private DcMotor flywheelLeftMotor = null;
-    private double driveSpeed = 1;
-    private double flywheelSpeed = 1;
-    private double actionEndTime = 0;
-    private double[] actionTimes;
-    private int currentActionIndex = 0;
+
     private PIDController turnPidController;
     private Timer timer;
     private IMU imu = null;
@@ -94,7 +86,7 @@ public class BasicBlueAuto4224 extends OpMode
      */
     @Override
     public void init() {
-        turnPidController = new PIDController(0.2,20, 0, 5, 0);
+        turnPidController = new PIDController(  0.5,30, 0, 5, 0);
         timer = new Timer();
 
         telemetry.addData("Status", "Initialized");
@@ -106,10 +98,6 @@ public class BasicBlueAuto4224 extends OpMode
         backLeftDrive = hardwareMap.get(DcMotor.class, Constants.BACK_LEFT_MOTOR);
         frontRightDrive = hardwareMap.get(DcMotor.class, Constants.FRONT_RIGHT_MOTOR);
         backRightDrive = hardwareMap.get(DcMotor.class, Constants.BACK_RIGHT_MOTOR);
-        intakeRightMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_LEFT_MOTOR);
-        intakeLeftMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_RIGHT_MOTOR);
-        flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
-        flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
         imu = hardwareMap.get(IMU.class, Constants.IMU);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -118,44 +106,23 @@ public class BasicBlueAuto4224 extends OpMode
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        intakeLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE
+        backRightDrive.setDirection(DcMotor.Direction.REVERSE
 
 
         );
-        intakeRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         imu.initialize(new IMU.Parameters(Constants.IMU_ORIENTATION));
 
 
-        intakeRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intakeLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        flywheelLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        flywheelRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
-
-        actionTimes = new double[10];
-        actionTimes[0] = .1;
-        actionTimes[1] = .0475;
-        actionTimes[2] = 5;
-        actionTimes[3] = .001;
-        actionTimes[4] = 1.5;
-        actionTimes[5] = 3;
-        actionTimes[6] = 4;
-        actionTimes[7] = 1;
-        actionTimes[8] = 7;
-        actionTimes[9] = .25;
-
-        actionEndTime = actionTimes[0];
     }
-
 
 
     /*
@@ -176,57 +143,7 @@ public class BasicBlueAuto4224 extends OpMode
     public void loop() {
         timer.Update();
 
-        if (currentActionIndex == 0) {
-            driveRobot(0, 1, 0);
-        }
-        else if (currentActionIndex == 1) {
-            driveRobot(0, 0, -21);
-        }
-        else if (currentActionIndex == 2) {
-            driveRobot(0,0,-21);
-            turnFlywheelON(FlyWheelState.FastSpeed);
-        }
-        else if (currentActionIndex == 3) {
-            driveRobot(0, 0, -21);
-        }
-        else if (currentActionIndex == 4) {
-            turnIntakeOn(true);
-        }
-        else if (currentActionIndex == 5) {
-            turnIntakeOn(false);
-            driveRobot(0, 0, -21);
-        }
-        else if (currentActionIndex == 6) {
-            turnFlywheelON(FlyWheelState.Off);
-            driveRobot(0, 1, -21);
-        }
-        else if (currentActionIndex == 7) {
-            driveRobot(0, 0, -21);
-        }
-        else if (currentActionIndex == 8) {
-            driveRobot(0, 1, -21);
-        }
-        else if (currentActionIndex == 9) {
-            driveRobot(0, -1, -21);
-        }
-        else if (currentActionIndex == 10) {
-            driveRobot(0,0,0);
-        }
-        else {
-           driveRobot(0,0,-21);
-
-
-
-            return;
-        }
-
-
-        if (runtime.seconds() > actionEndTime){
-            currentActionIndex++;
-            if(currentActionIndex < actionTimes.length){
-                actionEndTime += actionTimes[currentActionIndex];
-            }
-        }
+        driveRobot(0,0,30);
     }
 
     /*
@@ -240,38 +157,17 @@ public class BasicBlueAuto4224 extends OpMode
 
 
     public void driveRobot(double x, double y, double targetRotation){
-        double rx = turnPidController.Calculate(-imu.getRobotYawPitchRollAngles().getYaw(),targetRotation, timer.deltaTime) / 20;
+        double rx = turnPidController.Calculate(-imu.getRobotYawPitchRollAngles().getYaw(),targetRotation, timer.deltaTime) / 30;
         telemetry.addData("rx: ",rx);
+        telemetry.addData("YAAAAAW: ",-imu.getRobotYawPitchRollAngles().getYaw());
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        frontLeftDrive.setPower((y + x + rx) / denominator * driveSpeed);
-        backLeftDrive.setPower((y - x + rx) / denominator * driveSpeed);
-        frontRightDrive.setPower((y - x - rx) / denominator * driveSpeed);
-        backRightDrive.setPower((y + x - rx) / denominator * driveSpeed);
+        frontLeftDrive.setPower((y + x + rx) / denominator);
+        backLeftDrive.setPower((y - x + rx) / denominator);
+        frontRightDrive.setPower((y - x - rx) / denominator);
+        backRightDrive.setPower((y + x - rx) / denominator);
     }
 
-    public void turnIntakeOn(boolean on){
-        if (on == true){
-            intakeLeftMotor.setPower(-Constants.INTAKE_LEFT_SPEED);
-            intakeRightMotor.setPower(-Constants.INTAKE_RIGHT_SPEED);
-        }
-        else {
-            intakeRightMotor.setPower(0);
-            intakeLeftMotor.setPower(0);
-        }
-    }
-    public void turnFlywheelON(FlyWheelState state){
-        if (state == FlyWheelState.FastSpeed){
-            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
-            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
-        }
-        else if (state == FlyWheelState.SlowSpeed){
-            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
-            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
-        }
-        else if (state == FlyWheelState.Off){
-            flywheelLeftMotor.setPower(0);
-            flywheelRightMotor.setPower(0);
-        }
-    }
+
+
 
 }
