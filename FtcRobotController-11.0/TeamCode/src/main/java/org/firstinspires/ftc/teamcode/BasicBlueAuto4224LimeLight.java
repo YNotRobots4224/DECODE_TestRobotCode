@@ -73,6 +73,9 @@ public class BasicBlueAuto4224LimeLight extends OpMode
     private DcMotor backRightDrive = null;
 
     private PIDController turnPidController;
+    private double actionEndTime = 0;
+    private double[] actionTimes;
+    private int currentActionIndex = 0;
     private Timer timer;
     private IMU imu = null;
 
@@ -86,7 +89,7 @@ public class BasicBlueAuto4224LimeLight extends OpMode
      */
     @Override
     public void init() {
-        turnPidController = new PIDController(  0.5,30, 0, 5, 0);
+        turnPidController = new PIDController(  0.4,40, 1, 4, 0);
         timer = new Timer();
 
         telemetry.addData("Status", "Initialized");
@@ -122,6 +125,14 @@ public class BasicBlueAuto4224LimeLight extends OpMode
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
+
+       // actionTimes = new double[1];
+        //actionTimes[0] = 8;
+
+
+        //actionEndTime = actionTimes[0];
+
+
     }
 
 
@@ -143,7 +154,8 @@ public class BasicBlueAuto4224LimeLight extends OpMode
     public void loop() {
         timer.Update();
 
-        driveRobot(0,0,30);
+            driveRobot(0,0,30);
+
     }
 
     /*
@@ -157,9 +169,9 @@ public class BasicBlueAuto4224LimeLight extends OpMode
 
 
     public void driveRobot(double x, double y, double targetRotation){
-        double rx = turnPidController.Calculate(-imu.getRobotYawPitchRollAngles().getYaw(),targetRotation, timer.deltaTime) / 30;
+        double rx = turnPidController.Calculate(-imu.getRobotYawPitchRollAngles().getYaw(),targetRotation, timer.deltaTime) / 40;
         telemetry.addData("rx: ",rx);
-        telemetry.addData("YAAAAAW: ",-imu.getRobotYawPitchRollAngles().getYaw());
+        telemetry.addData("YAAAAAAAAAAAW: ",-imu.getRobotYawPitchRollAngles().getYaw());
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         frontLeftDrive.setPower((y + x + rx) / denominator);
         backLeftDrive.setPower((y - x + rx) / denominator);
