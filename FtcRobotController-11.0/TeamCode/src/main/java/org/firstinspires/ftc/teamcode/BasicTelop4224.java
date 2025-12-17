@@ -37,6 +37,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
+
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -224,16 +226,30 @@ public class BasicTelop4224 extends OpMode
 
 
 
-        if (gamepad1.leftBumperWasPressed()){
-            isSlowModeOn = !isSlowModeOn;
-        }
-        if (isSlowModeOn == true){
+        //if (gamepad1.leftBumperWasPressed()){
+           // isSlowModeOn = !isSlowModeOn;
+        //}
+       // if (isSlowModeOn == true){
 
-            driveSpeed = Constants.SLOW_DRIVE_SPEED;
+            //driveSpeed = Constants.SLOW_DRIVE_SPEED;
+       // }
+        //else {
+            //driveSpeed = Constants.DRIVE_SPEED;
+       // }
+
+        if (gamepad1.left_bumper);
+        {
+            intakeLeftMotor.setPower(Constants.INTAKE_LEFT_SPEED);
         }
-        else {
-            driveSpeed = Constants.DRIVE_SPEED;
+             else if (gamepad1.right_trigger > 0.25) {
+
+
+
+                intakeLeftMotor.setPower(-Constants.INTAKE_LEFT_SPEED);
+        } else {
+            intakeLeftMotor.setPower(0.0);
         }
+
 
     }
 
