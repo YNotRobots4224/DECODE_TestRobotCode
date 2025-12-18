@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -78,6 +80,8 @@ public class BasicBlueAuto4224LimeLight extends OpMode
     private int currentActionIndex = 0;
     private Timer timer;
     private IMU imu = null;
+    private Limelight3A limelight = null;
+    private ElapsedTime autotimer = new ElapsedTime();
 
 
   
@@ -102,6 +106,7 @@ public class BasicBlueAuto4224LimeLight extends OpMode
         frontRightDrive = hardwareMap.get(DcMotor.class, Constants.FRONT_RIGHT_MOTOR);
         backRightDrive = hardwareMap.get(DcMotor.class, Constants.BACK_RIGHT_MOTOR);
         imu = hardwareMap.get(IMU.class, Constants.IMU);
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -144,6 +149,10 @@ public class BasicBlueAuto4224LimeLight extends OpMode
         runtime.reset();
 
         imu.resetYaw();
+        limelight.setPollRateHz(100); //100x a second
+        autotimer.reset();
+        limelight.pipelineSwitch(0);
+        limelight.start();
 
     }
 
@@ -154,7 +163,23 @@ public class BasicBlueAuto4224LimeLight extends OpMode
     public void loop() {
         timer.Update();
 
-            driveRobot(0,0,30);
+        LLResult llResult = limelight.getLatestResult();
+        double aprilTagRotation = llResult.getTx();
+
+        telemetry.addData("X: ", llResult.getTx());
+
+
+        driveRobot(0,0,-imu.getRobotYawPitchRollAngles().getYaw() + aprilTagRotation);
+
+
+
+
+
+
+
+
+        driveRobot(0,0,30);
+
 
     }
 
@@ -166,6 +191,7 @@ public class BasicBlueAuto4224LimeLight extends OpMode
     {
 
     }
+
 
 
     public void driveRobot(double x, double y, double targetRotation){
