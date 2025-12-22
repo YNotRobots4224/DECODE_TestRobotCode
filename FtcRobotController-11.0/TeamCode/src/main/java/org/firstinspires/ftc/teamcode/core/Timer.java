@@ -5,6 +5,7 @@ public class Timer {
     // Timer
     public double timeSinceStart;
     public double deltaTime;
+    public double deltaTimer;
     private long currentTime = 0;
     private long tempTime = 0;
 
