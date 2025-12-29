@@ -29,8 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import android.icu.text.Transliterator;
-
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -60,8 +58,8 @@ import org.firstinspires.ftc.teamcode.core.Timer;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="RED___Limelight RED Telop 4224", group="Iterative OpMode")
-public class RED___LimelightREDTelop4224 extends OpMode
+@TeleOp(name="BLUE___Limelight BLUE Telop 4224", group="Iterative OpMode")
+public class BLUE___LimelightBLUETelop4224 extends OpMode
 {
     // Declare OpMode members.
 
@@ -156,7 +154,7 @@ public class RED___LimelightREDTelop4224 extends OpMode
     @Override
     public void start() {
         limelight.setPollRateHz(100);//how many times we ask the limelight for info
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(1);
         limelight.start();
 
     }
@@ -271,7 +269,14 @@ public class RED___LimelightREDTelop4224 extends OpMode
             }
 
 
-
+        if (gamepad1.left_bumper)
+        {
+            intakeLeftMotor.setPower(Constants.INTAKE_LEFT_SPEED);
+        }
+        else
+        {
+            intakeLeftMotor.setPower(0.0);
+        }
 
         if (gamepad1.left_trigger > 0.25){
             if (isLimelightAlignPressed == false) {
@@ -285,7 +290,7 @@ public class RED___LimelightREDTelop4224 extends OpMode
         LLResult llResult = limelight.getLatestResult();
 
         if (CanShoot(llResult.getBotpose().getPosition())) {
-            gamepad1.rumble(10.0, 10.0, 10000);
+            gamepad1.rumble(1.0, 1.0, 500);
         }
         else {
             gamepad1.rumble(0,0,0);
