@@ -139,7 +139,7 @@ public class BLUE___LimelightBLUETelop4224 extends OpMode
         RevHubOrientationOnRobot revHubOrientation = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.LEFT);
        imu.initialize(new IMU.Parameters(revHubOrientation));
 
-       pidController = new PIDController(0.4,40,1,4,0);
+       pidController = new PIDController(0.4,40,0,4,0);
        pidController.SetLoop(true,-180, 180);
        timer = new Timer();
         // Tell the driver that initialization is complete.
@@ -175,9 +175,6 @@ public class BLUE___LimelightBLUETelop4224 extends OpMode
             telemetry.addData("ty", llresult.getTy());
         }
         telemetry.addData("X: ", llresult.getTx());
-        telemetry.addData("roll: ", imu.getRobotYawPitchRollAngles().getRoll());
-        telemetry.addData("YAAW: ", imu.getRobotYawPitchRollAngles().getYaw());
-        telemetry.addData("Pitch: ", imu.getRobotYawPitchRollAngles().getPitch());
 
         double rx = gamepad1.right_stick_x;
         if (isLimelightAlignOn && llresult != null && llresult.isValid()) {
@@ -189,7 +186,7 @@ public class BLUE___LimelightBLUETelop4224 extends OpMode
             telemetry.addData("Aligning", false);
         }
 
-
+        telemetry.addData("RX: ", rx);
 
         double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
         double x = gamepad1.left_stick_x;
@@ -201,10 +198,10 @@ public class BLUE___LimelightBLUETelop4224 extends OpMode
         frontRightDrive.setPower((y - x - rx) / denominator * driveSpeed);
         backRightDrive.setPower((y + x - rx) / denominator * driveSpeed);
 
-        telemetry.addData("front Left Power: ",y + x + rx);
-        telemetry.addData("back Left Power: ",y - x + rx);
-        telemetry.addData("front Right Power: ",y - x - rx);
-        telemetry.addData("back Right Power: ",y + x - rx);
+        telemetry.addData("front Left Power: ",((y + x + rx) / denominator * driveSpeed));
+        telemetry.addData("back Left Power: ",((y - x + rx) / denominator * driveSpeed));
+        telemetry.addData("front Right Power: ",((y - x - rx) / denominator * driveSpeed));
+        telemetry.addData("back Right Power: ",((y + x - rx) / denominator * driveSpeed));
 
         telemetry.update();
 
