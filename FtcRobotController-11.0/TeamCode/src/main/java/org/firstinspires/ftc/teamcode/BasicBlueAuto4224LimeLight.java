@@ -189,7 +189,6 @@ public class BasicBlueAuto4224LimeLight extends OpMode
 
 
     public void driveRobot(double x, double y, double rx){
-        
         telemetry.addData("rx: ",rx);
         telemetry.addData("YAAAAAAAAAAAW: ",-imu.getRobotYawPitchRollAngles().getYaw());
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);

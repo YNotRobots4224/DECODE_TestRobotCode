@@ -139,7 +139,7 @@ public class BLUE___LimelightBLUETelop4224 extends OpMode
         RevHubOrientationOnRobot revHubOrientation = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.LEFT);
        imu.initialize(new IMU.Parameters(revHubOrientation));
 
-       pidController = new PIDController(0.85,45,1,15,0);
+       pidController = new PIDController(0.4,40,1,4,0);
        pidController.SetLoop(true,-180, 180);
        timer = new Timer();
         // Tell the driver that initialization is complete.
@@ -166,6 +166,7 @@ public class BLUE___LimelightBLUETelop4224 extends OpMode
     @Override
     public void loop() {
 
+        timer.Update();
         LLResult llresult = limelight.getLatestResult();
 
         if (llresult != null) {
@@ -181,8 +182,7 @@ public class BLUE___LimelightBLUETelop4224 extends OpMode
         double rx = gamepad1.right_stick_x;
         if (isLimelightAlignOn && llresult != null && llresult.isValid()) {
             double tx = llresult.getTx();
-            double kP = 0.03;
-            rx = -tx * kP;
+            rx = pidController.Calculate(0,tx,timer.deltaTime) / 45;
 
             telemetry.addData("Aligning", true);
         } else {
