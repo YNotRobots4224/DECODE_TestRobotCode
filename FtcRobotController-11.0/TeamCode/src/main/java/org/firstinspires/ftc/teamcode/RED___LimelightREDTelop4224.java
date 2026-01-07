@@ -111,7 +111,7 @@ public class RED___LimelightREDTelop4224 extends OpMode
         flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
         flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
         servoBlocker = hardwareMap.get(Servo.class, Constants.SERVO_BLOCKER);
-        imu = hardwareMap.get(IMU.class, "imu_thing");
+        imu = hardwareMap.get(IMU.class, "imu");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -175,16 +175,12 @@ public class RED___LimelightREDTelop4224 extends OpMode
             telemetry.addData("tx", llresult.getTx());
             telemetry.addData("ty", llresult.getTy());
         }
-
+        double rx = gamepad1.right_stick_x;
         if (isLimelightAlignOn && llresult != null && llresult.isValid()) {
             double tx = llresult.getTx();
             double kP = 0.03;
-            double turn = -tx * kP;
+             rx = -tx * kP;
 
-            frontLeftDrive.setPower(-turn);
-            backLeftDrive.setPower(-turn);
-            frontRightDrive.setPower(turn);
-            backRightDrive.setPower(turn);
 
             telemetry.addData("Aligning", true);
         } else {
@@ -195,7 +191,7 @@ public class RED___LimelightREDTelop4224 extends OpMode
 
         double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
         double x = gamepad1.left_stick_x;
-        double rx = gamepad1.right_stick_x;
+
 
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);

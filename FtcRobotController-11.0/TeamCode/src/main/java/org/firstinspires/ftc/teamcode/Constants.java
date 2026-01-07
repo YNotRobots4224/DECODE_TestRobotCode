@@ -20,7 +20,7 @@ public class Constants {
     public final static String FLYWHEEL_RIGHT_MOTOR = "flywheel_right_motor";// expansion port 2
     public final static String SERVO_BLOCKER = "servo_blocker";// port 0.1
     private final static RevHubOrientationOnRobot.LogoFacingDirection IMU_LOGO_DIRECTION = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-    private final static RevHubOrientationOnRobot.UsbFacingDirection IMU_USB_DIRECTION = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+    private final static RevHubOrientationOnRobot.UsbFacingDirection IMU_USB_DIRECTION = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
     public final static  RevHubOrientationOnRobot IMU_ORIENTATION = new RevHubOrientationOnRobot(IMU_LOGO_DIRECTION, IMU_USB_DIRECTION);
 }
 

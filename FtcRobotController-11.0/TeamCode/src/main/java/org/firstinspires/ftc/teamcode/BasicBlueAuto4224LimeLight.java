@@ -93,7 +93,7 @@ public class BasicBlueAuto4224LimeLight extends OpMode
      */
     @Override
     public void init() {
-        turnPidController = new PIDController(  0.4,40, 1, 4, 0);
+        turnPidController = new PIDController(0.85,45,1,15,0);
         timer = new Timer();
 
         telemetry.addData("Status", "Initialized");
@@ -167,19 +167,13 @@ public class BasicBlueAuto4224LimeLight extends OpMode
         double aprilTagRotation = llResult.getTx();
 
         telemetry.addData("X: ", llResult.getTx());
+        telemetry.addData("roll: ", imu.getRobotYawPitchRollAngles().getRoll());
+        telemetry.addData("YAAW: ", imu.getRobotYawPitchRollAngles().getYaw());
+        telemetry.addData("Pitch: ", imu.getRobotYawPitchRollAngles().getPitch());
 
 
-        driveRobot(0,0,-imu.getRobotYawPitchRollAngles().getYaw() + aprilTagRotation);
-
-
-
-
-
-
-
-
-        driveRobot(0,0,30);
-
+        // driveRobot(0,0,-imu.getRobotYawPitchRollAngles().getYaw() + aprilTagRotation);
+        //driveRobot(0,0,90);
 
     }
 
@@ -194,8 +188,8 @@ public class BasicBlueAuto4224LimeLight extends OpMode
 
 
 
-    public void driveRobot(double x, double y, double targetRotation){
-        double rx = turnPidController.Calculate(-imu.getRobotYawPitchRollAngles().getYaw(),targetRotation, timer.deltaTime) / 40;
+    public void driveRobot(double x, double y, double rx){
+        
         telemetry.addData("rx: ",rx);
         telemetry.addData("YAAAAAAAAAAAW: ",-imu.getRobotYawPitchRollAngles().getYaw());
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
