@@ -93,7 +93,7 @@ public class BasicBlueAuto4224LimeLight extends OpMode
      */
     @Override
     public void init() {
-        turnPidController = new PIDController(  0.4,40, 1, 4, 0);
+        turnPidController = new PIDController(  0.4,40, 0, 10, 0);
         timer = new Timer();
 
         telemetry.addData("Status", "Initialized");
@@ -168,17 +168,17 @@ public class BasicBlueAuto4224LimeLight extends OpMode
 
         telemetry.addData("X: ", llResult.getTx());
 
-
-        driveRobot(0,0,-imu.getRobotYawPitchRollAngles().getYaw() + aprilTagRotation);
-
-
-
-
-
-
-
-
         driveRobot(0,0,30);
+        //driveRobot(0,0,-imu.getRobotYawPitchRollAngles().getYaw() + aprilTagRotation);
+        //driveRobot(0,0,0);
+
+
+
+
+
+
+
+
 
 
     }

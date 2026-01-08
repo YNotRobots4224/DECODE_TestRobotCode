@@ -109,7 +109,7 @@ public class BLUE___LimelightBLUETelop4224 extends OpMode
         flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
         flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
         servoBlocker = hardwareMap.get(Servo.class, Constants.SERVO_BLOCKER);
-        imu = hardwareMap.get(IMU.class, "imu_thing");
+        imu = hardwareMap.get(IMU.class, "imu");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
