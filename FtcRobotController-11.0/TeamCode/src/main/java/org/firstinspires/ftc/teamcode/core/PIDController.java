@@ -88,10 +88,13 @@ public class PIDController {
         // Derivative
         if (kD != 0)
         {
-            if (error < maxError)
+            if (Math.abs(error) < maxError)
             {
-                errorRate = (error - lastError) / deltaTime;
-                lastError = errorRate;
+                if (error != lastError)
+                {
+                    errorRate = (error - lastError) / deltaTime;
+                    lastError = errorRate;
+                }
             }
         }
 

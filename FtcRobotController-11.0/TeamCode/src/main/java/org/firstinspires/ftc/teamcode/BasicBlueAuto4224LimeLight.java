@@ -73,6 +73,12 @@ public class BasicBlueAuto4224LimeLight extends OpMode
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
+    private DcMotor intakeRightMotor = null;
+    private DcMotor intakeLeftMotor = null;
+    private DcMotor flywheelRightMotor = null;
+    private DcMotor flywheelLeftMotor = null;
+    private double driveSpeed = 1;
+    private double flywheelSpeed = 1;
 
     private PIDController turnPidController;
     private double actionEndTime = 0;
@@ -82,6 +88,7 @@ public class BasicBlueAuto4224LimeLight extends OpMode
     private IMU imu = null;
     private Limelight3A limelight = null;
     private ElapsedTime autotimer = new ElapsedTime();
+    private double apriltagRotation = 0;
 
 
   
@@ -93,7 +100,7 @@ public class BasicBlueAuto4224LimeLight extends OpMode
      */
     @Override
     public void init() {
-        turnPidController = new PIDController(  0.4,40, 0, 10, 0);
+        turnPidController = new PIDController(  0.1,40, 0, 0, 0);
         timer = new Timer();
 
         telemetry.addData("Status", "Initialized");
@@ -105,6 +112,10 @@ public class BasicBlueAuto4224LimeLight extends OpMode
         backLeftDrive = hardwareMap.get(DcMotor.class, Constants.BACK_LEFT_MOTOR);
         frontRightDrive = hardwareMap.get(DcMotor.class, Constants.FRONT_RIGHT_MOTOR);
         backRightDrive = hardwareMap.get(DcMotor.class, Constants.BACK_RIGHT_MOTOR);
+        intakeRightMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_LEFT_MOTOR);
+        intakeLeftMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_RIGHT_MOTOR);
+        flywheelRightMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
+        flywheelLeftMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
         imu = hardwareMap.get(IMU.class, Constants.IMU);
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
@@ -114,28 +125,41 @@ public class BasicBlueAuto4224LimeLight extends OpMode
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.REVERSE
+        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        intakeLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE
 
 
         );
+        intakeRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         imu.initialize(new IMU.Parameters(Constants.IMU_ORIENTATION));
 
 
 
 
+        intakeRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flywheelLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flywheelRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
-       // actionTimes = new double[1];
-        //actionTimes[0] = 8;
-
-
-        //actionEndTime = actionTimes[0];
+       actionTimes = new double[8];
+        actionTimes[0] = 8;
+        actionTimes[1] = 2;
+        actionTimes[2] = 1.5;
+        actionTimes[3] = 2;
+        actionTimes[4] = 1.5;
+        actionTimes[5] = 1;
+        actionTimes[6] = 1;
+        actionTimes[7] = 13;
+        actionEndTime = actionTimes[0];
 
 
     }
@@ -153,6 +177,10 @@ public class BasicBlueAuto4224LimeLight extends OpMode
         autotimer.reset();
         limelight.pipelineSwitch(0);
         limelight.start();
+        LLResult llResult = limelight.getLatestResult();
+        double llresultApriltagRotation = llResult.getTx();
+        apriltagRotation = -imu.getRobotYawPitchRollAngles().getYaw() + llresultApriltagRotation;
+
 
     }
 
@@ -163,17 +191,43 @@ public class BasicBlueAuto4224LimeLight extends OpMode
     public void loop() {
         timer.Update();
 
-        LLResult llResult = limelight.getLatestResult();
-        double aprilTagRotation = llResult.getTx();
-
-        telemetry.addData("X: ", llResult.getTx());
-
-        driveRobot(0,0,30);
-        //driveRobot(0,0,-imu.getRobotYawPitchRollAngles().getYaw() + aprilTagRotation);
-        //driveRobot(0,0,0);
 
 
+        telemetry.addData("X: ", apriltagRotation);
 
+        if (currentActionIndex == 0) {
+            driveRobot(0, 0, apriltagRotation);
+        }
+        else if (currentActionIndex == 1){
+            turnFlywheelON(FlyWheelState.FastSpeed);
+        }
+        else if (currentActionIndex == 2){
+            turnIntakeOn(true);
+        }
+        else if (currentActionIndex == 3){
+            turnIntakeOn(false);
+        }
+        else if (currentActionIndex == 4){
+            turnIntakeOn(true);
+        }
+        else if (currentActionIndex == 5){
+            turnIntakeOn(false);
+            turnFlywheelON(FlyWheelState.Off);
+        }
+        else if (currentActionIndex == 6){
+            driveRobot(0,1,0);
+        }
+        else if (currentActionIndex == 7){
+            driveRobot(0,0,0);
+        }
+
+
+        if (runtime.seconds() > actionEndTime){
+            currentActionIndex++;
+            if(currentActionIndex < actionTimes.length){
+                actionEndTime += actionTimes[currentActionIndex];
+            }
+        }
 
 
 
@@ -203,6 +257,30 @@ public class BasicBlueAuto4224LimeLight extends OpMode
         backLeftDrive.setPower((y - x + rx) / denominator);
         frontRightDrive.setPower((y - x - rx) / denominator);
         backRightDrive.setPower((y + x - rx) / denominator);
+    }
+    public void turnFlywheelON(FlyWheelState state){
+        if (state == FlyWheelState.FastSpeed){
+            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
+            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
+        }
+        else if (state == FlyWheelState.SlowSpeed){
+            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
+            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
+        }
+        else if (state == FlyWheelState.Off){
+            flywheelLeftMotor.setPower(0);
+            flywheelRightMotor.setPower(0);
+        }
+    }
+    public void turnIntakeOn(boolean on){
+        if (on == true){
+            intakeLeftMotor.setPower(-Constants.INTAKE_LEFT_SPEED);
+            intakeRightMotor.setPower(-Constants.INTAKE_RIGHT_SPEED);
+        }
+        else {
+            intakeRightMotor.setPower(0);
+            intakeLeftMotor.setPower(0);
+        }
     }
 
 
