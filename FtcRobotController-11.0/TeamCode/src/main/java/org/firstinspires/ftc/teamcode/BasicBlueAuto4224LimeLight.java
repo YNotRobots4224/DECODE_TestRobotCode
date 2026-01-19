@@ -126,15 +126,14 @@ public class BasicBlueAuto4224LimeLight extends OpMode
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        intakeLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE
+        intakeLeftMotor.setDirection(DcMotor.Direction.FORWARD
 
 
         );
-        intakeRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        flywheelRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        flywheelLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        flywheelRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        flywheelLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         imu.initialize(new IMU.Parameters(Constants.IMU_ORIENTATION));
-
 
 
 
@@ -153,12 +152,12 @@ public class BasicBlueAuto4224LimeLight extends OpMode
        actionTimes = new double[8];
         actionTimes[0] = 8;
         actionTimes[1] = 2;
-        actionTimes[2] = 1.5;
+        actionTimes[2] = 1.2;
         actionTimes[3] = 2;
-        actionTimes[4] = 1.5;
+        actionTimes[4] = 1.2;
         actionTimes[5] = 1;
-        actionTimes[6] = 1;
-        actionTimes[7] = 13;
+        actionTimes[6] = .23;
+        actionTimes[7] = .23;
         actionEndTime = actionTimes[0];
 
 
@@ -260,12 +259,12 @@ public class BasicBlueAuto4224LimeLight extends OpMode
     }
     public void turnFlywheelON(FlyWheelState state){
         if (state == FlyWheelState.FastSpeed){
-            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
-            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
-        }
-        else if (state == FlyWheelState.SlowSpeed){
             flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
             flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
+        }
+        else if (state == FlyWheelState.SlowSpeed){
+            flywheelLeftMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
+            flywheelRightMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
         }
         else if (state == FlyWheelState.Off){
             flywheelLeftMotor.setPower(0);
