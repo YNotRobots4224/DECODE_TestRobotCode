@@ -29,12 +29,16 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -64,10 +68,12 @@ public class NewRobotBasicTelop4224 extends OpMode
     private DcMotor intakeMotor = null;
     private DcMotor elevatorMotor = null;
     private DcMotor turretMotor = null;
-    private DcMotor outtakeMotor = null;
+    private DcMotor flywheelMotor = null;
     private boolean isSlowModeOn = false;
     private double driveSpeed = Constants.DRIVE_SPEED;
-
+    private boolean isLimelightAlignPressed = false;
+    private  boolean isLimelightAlignOn = false;
+    private Limelight3A limelight = null;
 
 
 
@@ -87,22 +93,25 @@ public class NewRobotBasicTelop4224 extends OpMode
         backLeftDrive = hardwareMap.get(DcMotor.class, Constants.BACK_LEFT_MOTOR);
         frontRightDrive = hardwareMap.get(DcMotor.class, Constants.FRONT_RIGHT_MOTOR);
         backRightDrive = hardwareMap.get(DcMotor.class, Constants.BACK_RIGHT_MOTOR);
-        intakeMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_LEFT_MOTOR);
-        elevatorMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_RIGHT_MOTOR);
-        turretMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_RIGHT_MOTOR);
-        outtakeMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_LEFT_MOTOR);
+        intakeMotor = hardwareMap.get(DcMotor.class, Constants.INTAKE_MOTOR);
+        elevatorMotor = hardwareMap.get(DcMotor.class, Constants.ELEVATOR_MOTOR);
+        turretMotor = hardwareMap.get(DcMotor.class, Constants.TURRET_MOTOR);
+        flywheelMotor = hardwareMap.get(DcMotor.class, Constants.FLYWHEEL_MOTOR);
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+       intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD
+
+       );
         elevatorMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         turretMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        outtakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -112,7 +121,7 @@ public class NewRobotBasicTelop4224 extends OpMode
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         elevatorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -125,8 +134,10 @@ public class NewRobotBasicTelop4224 extends OpMode
      */
     @Override
     public void start() {
-        runtime.reset();
 
+            limelight.setPollRateHz(100);//how many times we ask the limelight for info
+            limelight.pipelineSwitch(1);
+            limelight.start();
     }
 
 
@@ -134,7 +145,29 @@ public class NewRobotBasicTelop4224 extends OpMode
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
     @Override
-    public void loop() {
+    public void loop()
+    {LLResult llresult = limelight.getLatestResult();
+
+        if (llresult != null) {
+            telemetry.addData("Target Found", llresult.isValid());
+            telemetry.addData("tx", llresult.getTx());
+            telemetry.addData("ty", llresult.getTy());
+        }
+
+        if (isLimelightAlignOn && llresult != null && llresult.isValid()) {
+            double tx = llresult.getTx();
+            double kP = 0.03;
+            double turn = -tx * kP;
+
+            frontLeftDrive.setPower(-turn);
+            backLeftDrive.setPower(-turn);
+            frontRightDrive.setPower(turn);
+            backRightDrive.setPower(turn);
+
+            telemetry.addData("Aligning", true);
+        } else {
+            telemetry.addData("Aligning", false);
+        }
         double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
@@ -163,47 +196,73 @@ public class NewRobotBasicTelop4224 extends OpMode
         if (gamepad1.right_bumper) {
 
 
-            intakeMotor.setPower(Constants.INTAKE_LEFT_SPEED);
+            intakeMotor.setPower(Constants.INTAKE_SPEED);
 
 
         } else {
             intakeMotor.setPower(0);
         }
-        if (gamepad1.right_trigger > 0.25) {
+        if (gamepad1.left_bumper) {
 
 
+            intakeMotor.setPower(-Constants.INTAKE_SPEED);
 
-            elevatorMotor.setPower(Constants.INTAKE_LEFT_SPEED);
 
         } else {
-            elevatorMotor.setPower(0);
+            intakeMotor.setPower(0);
         }
 
-
-
-
-
-
        if (gamepad1.left_trigger > 0.25){
-           elevatorMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
+           elevatorMotor.setPower(Constants.ELEVATOR_SPEED);
        }
 
        else {
             elevatorMotor.setPower(0);
         }
 
-        if (gamepad1.left_bumper)
-        {
-            outtakeMotor.setPower(-Constants.INTAKE_LEFT_SPEED);
+       if (gamepad1.left_trigger > 0.25) {
+           turretMotor.setPower(Constants.TURRET_SPEED);
+       }
+       else {
+           turretMotor.setPower(0);
+
+       }
+       if (gamepad1.x) {
+           flywheelMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
+       }
+       else {
+           flywheelMotor.setPower(0);
+       }
+       if (gamepad1.y) {
+           flywheelMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
+       }
+       else {
+           flywheelMotor.setPower(0);
+       }
+        if (gamepad1.left_trigger > 0.25){
+            if (isLimelightAlignPressed == false) {
+                isLimelightAlignOn = !isLimelightAlignOn;
+                isLimelightAlignPressed = true;
+            }
         }
-        else
-        {
-            outtakeMotor.setPower(0.0);
+        else {
+            isLimelightAlignPressed = false;
         }
+        LLResult llResult = limelight.getLatestResult();
+
+        if (CanShoot(llResult.getBotpose().getPosition())) {
+            gamepad1.rumble(1.0, 1.0, 500);
+        }
+        else {
+            gamepad1.rumble(0,0,0);
+        }
+
 
 
     }
-
+    private boolean CanShoot(Position position) {
+        return false;
+    }
 
     /*
      * Code to run ONCE after the driver hits STOP
