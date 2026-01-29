@@ -199,10 +199,7 @@ public class NewRobotBasicTelop4224 extends OpMode
             intakeMotor.setPower(Constants.INTAKE_SPEED);
 
 
-        } else {
-            intakeMotor.setPower(0);
-        }
-        if (gamepad1.left_bumper) {
+        } else if (gamepad1.left_bumper) {
 
 
             intakeMotor.setPower(-Constants.INTAKE_SPEED);
@@ -230,10 +227,7 @@ public class NewRobotBasicTelop4224 extends OpMode
        if (gamepad1.x) {
            flywheelMotor.setPower(Constants.FLYWHEEL_SPEED_ONE);
        }
-       else {
-           flywheelMotor.setPower(0);
-       }
-       if (gamepad1.y) {
+       else if (gamepad1.y) {
            flywheelMotor.setPower(Constants.FLYWHEEL_SPEED_TWO);
        }
        else {
